@@ -1,0 +1,19 @@
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DungeonDelver", "DungeonDelver.csproj", "{CD8EA1FD-87D3-4413-ACDD-CB928935768C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+	Debug|Any CPU = Debug|Any CPU
+	ExportDebug|Any CPU = ExportDebug|Any CPU
+	ExportRelease|Any CPU = ExportRelease|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CD8EA1FD-87D3-4413-ACDD-CB928935768C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD8EA1FD-87D3-4413-ACDD-CB928935768C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD8EA1FD-87D3-4413-ACDD-CB928935768C}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
+		{CD8EA1FD-87D3-4413-ACDD-CB928935768C}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
+		{CD8EA1FD-87D3-4413-ACDD-CB928935768C}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
+		{CD8EA1FD-87D3-4413-ACDD-CB928935768C}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+	EndGlobalSection
+EndGlobal
