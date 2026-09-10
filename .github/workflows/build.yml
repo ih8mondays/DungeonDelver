@@ -7,8 +7,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  compile:
-    name: dotnet build
+  build-and-test:
+    name: dotnet build & test
     runs-on: ubuntu-latest
 
     steps:
@@ -22,7 +22,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.nuget/packages
-          key: nuget-${{ runner.os }}-${{ hashFiles('godot/**/*.csproj') }}
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
           restore-keys: nuget-${{ runner.os }}-
 
       - name: Restore
@@ -30,3 +30,20 @@ jobs:
 
       - name: Build
         run: dotnet build godot/DungeonDelver.sln --configuration Debug --no-restore
+
+      - name: Test
+        run: >
+          dotnet test tests/DungeonDelver.Tests/DungeonDelver.Tests.csproj
+          --configuration Debug
+          --no-build
+          --logger "trx;LogFileName=test-results.trx"
+          --logger "console;verbosity=normal"
+          --results-directory artifacts/test-results
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: artifacts/test-results
+          if-no-files-found: ignore

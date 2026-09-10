@@ -1,0 +1,16 @@
+# .NET / C# build output
+bin/
+obj/
+artifacts/
+*.user
+*.userprefs
+*.suo
+
+# IDEs
+.idea/
+.vs/
+.vscode/
+
+# OS junk
+.DS_Store
+Thumbs.db

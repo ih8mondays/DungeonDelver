@@ -2,6 +2,8 @@
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DungeonDelver", "DungeonDelver.csproj", "{CD8EA1FD-87D3-4413-ACDD-CB928935768C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DungeonDelver.Tests", "..\tests\DungeonDelver.Tests\DungeonDelver.Tests.csproj", "{3F2A8C41-7D65-4E9B-9C10-5B8E2A6F4D30}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 	Debug|Any CPU = Debug|Any CPU
@@ -15,5 +17,11 @@ Global
 		{CD8EA1FD-87D3-4413-ACDD-CB928935768C}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
 		{CD8EA1FD-87D3-4413-ACDD-CB928935768C}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
 		{CD8EA1FD-87D3-4413-ACDD-CB928935768C}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+		{3F2A8C41-7D65-4E9B-9C10-5B8E2A6F4D30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F2A8C41-7D65-4E9B-9C10-5B8E2A6F4D30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F2A8C41-7D65-4E9B-9C10-5B8E2A6F4D30}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
+		{3F2A8C41-7D65-4E9B-9C10-5B8E2A6F4D30}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
+		{3F2A8C41-7D65-4E9B-9C10-5B8E2A6F4D30}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
+		{3F2A8C41-7D65-4E9B-9C10-5B8E2A6F4D30}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
 	EndGlobalSection
 EndGlobal
