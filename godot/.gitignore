@@ -1,3 +1,25 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+
+# .NET / C# build output
+bin/
+obj/
+.mono/
+*.user
+*.userprefs
+*.suo
+
+# IDEs
+.idea/
+.vs/
+.vscode/
+
+# Export output (export_presets.cfg IS tracked - keep paths relative,
+# keep keystore credentials in Editor Settings, never in the preset)
+/builds/
+/export/
+
+# OS junk
+.DS_Store
+Thumbs.db
