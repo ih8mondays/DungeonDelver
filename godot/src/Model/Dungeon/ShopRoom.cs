@@ -2,7 +2,6 @@
 
 namespace DungeonDelver.Model.Dungeon;
 
-/// A shop. Always safe to leave.
 public class ShopRoom : Room
 {
     // TODO: the shop, once it exists.

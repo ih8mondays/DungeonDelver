@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "name": "Crypt of the Ember King",
+  "rooms": [
+    { "id": "entrance",     "type": "combat", "exits": ["hall"] },
+    { "id": "hall",         "type": "combat", "exits": ["east_gallery", "west_stair"] },
+    { "id": "east_gallery", "type": "combat", "exits": ["armory", "cistern"] },
+    { "id": "west_stair",   "type": "combat", "exits": ["cistern"] },
+    { "id": "armory",       "type": "shop",   "exits": ["shrine"] },
+    { "id": "cistern",      "type": "combat", "exits": ["shrine"] },
+    { "id": "shrine",       "type": "shop",   "exits": ["throne"] },
+    { "id": "throne",       "type": "combat", "exits": [] }
+  ]
+}
