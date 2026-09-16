@@ -6,8 +6,6 @@
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-    <!-- Mirror the configurations the Godot game project defines so the
-         solution can build every configuration without warnings. -->
     <Configurations>Debug;ExportDebug;ExportRelease</Configurations>
   </PropertyGroup>
 
