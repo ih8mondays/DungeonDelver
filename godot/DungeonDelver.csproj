@@ -6,5 +6,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="src\Resources\NewFile1.txt" />
+    <Content Include="src\Scenes\UI\delete_me.txt" />
   </ItemGroup>
 </Project>
