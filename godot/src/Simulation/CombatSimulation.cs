@@ -1,6 +1,5 @@
 namespace DungeonDelver.Simulation;
 
-public class CombatSimulation
-{
+public class CombatSimulation {
     
 }
