@@ -1,6 +1,5 @@
-namespace DungeonDelver.Scenes;
+namespace DungeonDelver.Scenes.Combat;
 
-public class CombatScene
-{
+public class CombatScene {
     
 }
