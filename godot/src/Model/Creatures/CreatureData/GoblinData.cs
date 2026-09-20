@@ -1,7 +1,6 @@
-namespace DungeonDelver.Model.Creatures;
+namespace DungeonDelver.Model.Creatures.CreatureData;
 
 // For JSON purposes ->
 // var data = JsonSerializer.Deserialize<CreatureData>(json)!;
 // var goblin = new Goblin(data);
-public record CreatureData(string Name, int MaxHP, int AttackPower);
-    
+public record GoblinData(string Name, int MaxHP, int AttackPower);

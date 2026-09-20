@@ -21,17 +21,6 @@ public abstract class Creature {
 		_abilities = new();
 	}
 	
-	// For JSON purposes ->
-	// var data = JsonSerializer.Deserialize<CreatureData>(json)!;
-	// var goblin = new Goblin(data);
-	public Creature(CreatureData data) {
-		Name = data.Name;
-		MaxHP = data.MaxHP;
-		CurrentHP = data.MaxHP;
-		AttackPower = data.AttackPower;
-		_abilities = new();
-	}
-	
     public void Attack() {
         
     }
