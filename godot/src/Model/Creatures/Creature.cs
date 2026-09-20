@@ -3,26 +3,23 @@ using DungeonDelver.Model.Abilities;
 
 namespace DungeonDelver.Model.Creatures;
 
-public abstract class Creature {
-    public required string Name { get; init; }
-    public required int MaxHP { get; init; }
-    public int CurrentHP { get; private set; }
+public abstract class Creature(string name,  int maxHP, int attackPower, int? currentHP = null) {
+	
+    public required string Name { get; init; } = name;
+    public required int MaxHP { get; init; } = maxHP;
+    public int CurrentHP { get; private set; } = currentHP ?? maxHP;
     public bool IsAlive => CurrentHP > 0;
-	public required int AttackPower { get; init; }
-	private readonly List<Ability> _abilities;
+    public required int AttackPower { get; init; } = attackPower;
+	private readonly List<Ability> _abilities = new();
 	public IReadOnlyList<Ability> Abilities => _abilities;
 	
 	
-	public Creature(string name,  int maxHP, int attackPower) {
-		Name = name;
-		MaxHP = maxHP;
-		CurrentHP = maxHP;
-		AttackPower = attackPower;
-		_abilities = new();
-	}
-	
     public void Attack() {
         
+    }
+    
+    public void TakeDamage(int damage) {
+        CurrentHP -= damage;
     }
     
     
