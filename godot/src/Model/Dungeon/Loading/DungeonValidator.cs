@@ -1,76 +1,16 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace DungeonDelver.Model.Dungeon.Loading;
 
-// json text -> DungeonFile -> check rules -> DungeonMap
-// no godot in here, so it can be unit tested. reading the file from disk is godot's job (DungeonWalk)
-// static class = only static methods, you can't make objects of it
-public static class DungeonLoader {
-    // map format version we can read. bump it when the json format changes
-    public const int CurrentVersion = 1;
+/// all the rules a map file has to follow.
+internal static class DungeonValidator
+{
+    internal const int CurrentVersion = 1;
+    internal const int MaxExits = 3;    // max doors per room
 
-    // max doors per room
-    public const int MaxExits = 3;
-
-    // "type" in the json -> function that builds that room
-    // Func<in, out> = delegate. same as java Function<RoomEntry, Room>
-    // new room type = add one line here
-    private static readonly Dictionary<string, Func<DungeonFile.RoomEntry, Room>> RoomFactories = new() {
-        ["combat"] = r => new CombatRoom(r.Id, r.Exits),
-        ["shop"] = r => new ShopRoom(r.Id, r.Exits),
-    };
-
-    // settings for the .NET json reader
-    private static readonly JsonSerializerOptions JsonOptions = new() {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,              // "exits" in json = Exits in c#
-        ReadCommentHandling = JsonCommentHandling.Skip,                 // allow // comments in map files
-        AllowTrailingCommas = true,                                     // allow a comma after the last item
-        UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,  // unknown field (typo like "exit") = error
-    };
-
-    // main entry point. text in, map out
-    // source = file name, only used in error messages. "(json)" is a default value, so it can be left out
-    public static DungeonMap FromJson(string json, string source = "(json)") =>
-        Build(Parse(json, source), source);
-
-    // checks all the rules first. if anything is wrong -> throws ONE exception with every problem
-    public static DungeonMap Build(DungeonFile file, string source = "(file)")
-    {
-        ArgumentNullException.ThrowIfNull(file);
-
-        var problems = Validate(file);
-        if (problems.Count > 0)
-            throw new InvalidDungeonException(source, problems);
-
-        // look up the build function for the type and call it with the room
-        var rooms = file.Rooms.Select(r => RoomFactories[r.Type](r));
-        // Single() = there must be exactly one start. Validate already made sure of that
-        return new DungeonMap(file.Name, rooms, FindStartIds(file.Rooms).Single());
-    }
-
-    // json text -> DungeonFile (plain data, no real rooms yet)
-    private static DungeonFile Parse(string json, string source)
-    {
-        try
-        {
-            // ?? = if the left side is null, do the right side
-            return JsonSerializer.Deserialize<DungeonFile>(json, JsonOptions)
-                   ?? throw new InvalidDungeonException(source, new[] { "File is empty (null)." });
-        }
-        // broken json -> rethrow as our own exception, so callers only catch one type
-        catch (JsonException e)
-        {
-            throw new InvalidDungeonException(source, new[] { $"Bad JSON: {e.Message}" }, e);
-        }
-    }
-
-    // returns every broken rule. empty list = map is fine
-    // collects all problems instead of stopping at the first one
-    private static List<string> Validate(DungeonFile file)
+    /// returns every broken rule. empty list = map is fine
+    internal static List<string> Validate(DungeonFile file)
     {
         var problems = new List<string>();
 
@@ -102,8 +42,8 @@ public static class DungeonLoader {
             if (string.IsNullOrWhiteSpace(room.Id))
                 problems.Add($"Room #{i} has no id.");
 
-            if (room.Type == null || !RoomFactories.ContainsKey(room.Type))
-                problems.Add($"Room {name} has unknown type '{room.Type}'. Allowed: {string.Join(", ", RoomFactories.Keys)}.");
+            if (!RoomFactory.IsKnownType(room.Type))
+                problems.Add($"Room {name} has unknown type '{room.Type}'. Allowed: {string.Join(", ", RoomFactory.KnownTypes)}.");
 
             if (room.Exits == null)
             {
@@ -156,7 +96,7 @@ public static class DungeonLoader {
     }
 
     // start room = a room no exit points to
-    private static List<string> FindStartIds(List<DungeonFile.RoomEntry> rooms)
+    internal static List<string> FindStartIds(List<DungeonFile.RoomEntry> rooms)
     {
         // SelectMany = flatten all the exit lists into one
         var targets = rooms.SelectMany(r => r.Exits).ToHashSet();
@@ -188,29 +128,5 @@ public static class DungeonLoader {
 
         // still in incoming = never hit 0 = in a loop
         return rooms.Select(r => r.Id).Where(incoming.ContainsKey).ToList();
-    }
-}
-
-// our own exception. Problems = everything that's wrong, not just the first thing
-public class InvalidDungeonException : Exception
-{
-    public IReadOnlyList<string> Problems { get; }
-
-    // the public constructors just pass on to the private one. ": this(...)" = java this(...)
-    public InvalidDungeonException(string source, IEnumerable<string> problems)
-        : this(source, problems.ToList(), null)
-    {
-    }
-
-    public InvalidDungeonException(string source, IEnumerable<string> problems, Exception inner)
-        : this(source, problems.ToList(), inner)
-    {
-    }
-
-    // builds the message: "Map 'x' is invalid:" + one line per problem
-    private InvalidDungeonException(string source, List<string> problems, Exception inner)
-        : base($"Map '{source}' is invalid:\n - " + string.Join("\n - ", problems), inner)
-    {
-        Problems = problems;
     }
 }
