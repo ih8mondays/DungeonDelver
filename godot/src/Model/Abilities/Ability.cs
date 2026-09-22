@@ -1,0 +1,7 @@
+namespace DungeonDelver.Model.Abilities;
+
+public abstract class Ability
+{
+    public abstract void Use();
+    
+}
