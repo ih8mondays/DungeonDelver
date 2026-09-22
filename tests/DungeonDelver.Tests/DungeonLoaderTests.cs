@@ -1,21 +1,22 @@
 using DungeonDelver.Model.Dungeon;
 using DungeonDelver.Model.Dungeon.Loading;
+using DungeonDelver.Model.Dungeon.Loading.Dto;
 
 namespace DungeonDelver.Tests;
 
 public class DungeonLoaderTests {
-    private static DungeonFile.RoomEntry R(string id, string type, params string[] exits) =>
-        new() { Id = id, Type = type, Exits = exits.ToList() };
+    private static RoomDto R(string id, string type, params string[] exits) =>
+        new(id,type,exits.ToList());
 
-    private static DungeonFile Map(params DungeonFile.RoomEntry[] rooms) =>
-        new() { Version = DungeonLoader.CurrentVersion, Name = "Test", Rooms = rooms.ToList() };
+    private static DungeonDto Map(params RoomDto[] rooms) =>
+        new(DungeonLoader.CurrentVersion, "Test", rooms.ToList());
 
-    private static DungeonFile Line() => Map(
+    private static DungeonDto Line() => Map(
         R("a", "combat", "b"),
         R("b", "shop", "c"),
         R("c", "combat"));
 
-    private static IReadOnlyList<string> ProblemsOf(DungeonFile data) =>
+    private static IReadOnlyList<string> ProblemsOf(DungeonDto data) =>
         Assert.Throws<InvalidDungeonException>(() => DungeonLoader.Build(data)).Problems;
 
     private static string MapsFolder() {
@@ -81,8 +82,7 @@ public class DungeonLoaderTests {
     // A map with an unknown version number is rejected.
     [Fact]
     public void WrongVersion_IsRejected() {
-        var data = Line();
-        data.Version = 99;
+        var data = new DungeonDto(99,"Test",new List<RoomDto>()); 
         Assert.Contains(ProblemsOf(data), p => p.Contains("version"));
     }
 
@@ -150,8 +150,7 @@ public class DungeonLoaderTests {
     // A map with several mistakes reports all of them at once, not just the first.
     [Fact]
     public void SeveralProblems_AreAllReported() {
-        var data = Map(R("", "boss", "x"), R("b", "dragon"));
-        data.Name = "";
+        var data = new DungeonDto(999, "", null);
         Assert.True(ProblemsOf(data).Count >= 3);
     }
 }
