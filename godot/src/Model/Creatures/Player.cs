@@ -1,12 +1,12 @@
-using DungeonDelver.Model.Creatures.CreatureData;
+using DungeonDelver.Model.Dto.CreatureDto;
 
 namespace DungeonDelver.Model.Creatures;
 
-public class Player(string name, int maxHP, int attackPower) : Creature(name, maxHP, attackPower) { 
+public class Player(string name, int maxHp, int attackPower) : Creature(name, maxHp, attackPower) { 
     
     // For JSON purposes ->
     // var data = JsonSerializer.Deserialize<CreatureData>(json)!;
     // var goblin = new Goblin(data);
-    public Player(PlayerData data) : this(data.Name, data.MaxHP, data.AttackPower) { }
+    public Player(PlayerDto data) : this(data.Name, data.MaxHp, data.AttackPower) { }
 
 }

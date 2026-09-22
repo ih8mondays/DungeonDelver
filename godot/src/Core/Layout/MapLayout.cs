@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DungeonDelver.Model.Dungeon;
 using Godot;
 
-namespace DungeonDelver.Model.Dungeon.Layout;
+namespace DungeonDelver.Core.Layout;
 
 /// Where every room sits on screen, and which tier it belongs to.
 /// Just the answer - the work happens in TieredLayout.

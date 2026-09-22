@@ -1,12 +1,13 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using DungeonDelver.Model.Dto.DungeonDto;
 
-namespace DungeonDelver.Model.Dungeon.Loading;
+namespace DungeonDelver.Core.Loading;
 
-/// json text -> DungeonFile (plain data, no real rooms yet).
+/// JSON text -> DungeonDto (plain data, no real rooms yet).
 internal static class DungeonJsonParser
 {
-    // settings for the .NET json reader
+    // settings for the .NET JSON reader
     private static readonly JsonSerializerOptions JsonOptions = new() {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,              // "exits" in json = Exits in c#
         ReadCommentHandling = JsonCommentHandling.Skip,                 // allow // comments in map files
@@ -14,12 +15,12 @@ internal static class DungeonJsonParser
         UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,  // unknown field (typo like "exit") = error
     };
 
-    internal static DungeonFile Parse(string json, string source)
+    internal static DungeonDto Parse(string json, string source)
     {
         try
         {
             // ?? = if the left side is null, do the right side
-            return JsonSerializer.Deserialize<DungeonFile>(json, JsonOptions)
+            return JsonSerializer.Deserialize<DungeonDto>(json, JsonOptions)
                    ?? throw new InvalidDungeonException(source, new[] { "File is empty (null)." });
         }
         // broken json -> rethrow as our own exception, so callers only catch one type

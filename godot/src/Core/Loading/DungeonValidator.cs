@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+using DungeonDelver.Model.Dto.DungeonDto;
 
-namespace DungeonDelver.Model.Dungeon.Loading;
+namespace DungeonDelver.Core.Loading;
 
 /// all the rules a map file has to follow.
 internal static class DungeonValidator
@@ -10,26 +11,26 @@ internal static class DungeonValidator
     internal const int MaxExits = 3;    // max doors per room
 
     /// returns every broken rule. empty list = map is fine
-    internal static List<string> Validate(DungeonFile file)
+    internal static List<string> Validate(DungeonDto dto)
     {
         var problems = new List<string>();
 
-        if (file.Version != CurrentVersion)
-            problems.Add($"Unsupported version {file.Version} (this game reads version {CurrentVersion}).");
+        if (dto.Version != CurrentVersion)
+            problems.Add($"Unsupported version {dto.Version} (this game reads version {CurrentVersion}).");
 
-        if (string.IsNullOrWhiteSpace(file.Name))
+        if (string.IsNullOrWhiteSpace(dto.Name))
             problems.Add("Map has no name.");
 
-        if (file.Rooms == null || file.Rooms.Count == 0)
+        if (dto.Rooms == null || dto.Rooms.Count == 0)
         {
             problems.Add("Map has no rooms.");
             return problems;  // nothing more to check
         }
 
         // round 1: each room on its own
-        for (var i = 0; i < file.Rooms.Count; i++)
+        for (var i = 0; i < dto.Rooms.Count; i++)
         {
-            var room = file.Rooms[i];
+            var room = dto.Rooms[i];
             if (room == null)
             {
                 problems.Add($"Room #{i} is null.");
@@ -66,12 +67,12 @@ internal static class DungeonValidator
             return problems;  // round 2 and 3 need clean rooms, stop here
 
         // round 2: ids are unique and every exit points to a real room
-        foreach (var dup in file.Rooms.GroupBy(r => r.Id).Where(g => g.Count() > 1))
+        foreach (var dup in dto.Rooms.GroupBy(r => r.Id).Where(g => g.Count() > 1))
             problems.Add($"Room id '{dup.Key}' is used {dup.Count()} times.");
 
         // hashset = fast Contains()
-        var ids = file.Rooms.Select(r => r.Id).ToHashSet();
-        foreach (var room in file.Rooms)
+        var ids = dto.Rooms.Select(r => r.Id).ToHashSet();
+        foreach (var room in dto.Rooms)
         foreach (var exit in room.Exits.Where(e => !ids.Contains(e)))
             problems.Add($"Room '{room.Id}' has an exit to '{exit}', which doesn't exist.");
 
@@ -79,15 +80,15 @@ internal static class DungeonValidator
             return problems;  // round 3 needs valid exits
 
         // round 3: the whole map. one end, one start, no loops
-        var ends = file.Rooms.Where(r => r.Exits.Count == 0).Select(r => r.Id).ToList();
+        var ends = dto.Rooms.Where(r => r.Exits.Count == 0).Select(r => r.Id).ToList();
         if (ends.Count != 1)
             problems.Add($"Map needs exactly 1 end room (a room with no exits), found {ends.Count}: [{string.Join(", ", ends)}].");
 
-        var starts = FindStartIds(file.Rooms);
+        var starts = FindStartIds(dto.Rooms);
         if (starts.Count != 1)
             problems.Add($"Map needs exactly 1 start room (a room no exit leads to), found {starts.Count}: [{string.Join(", ", starts)}].");
 
-        var inLoop = FindRoomsInLoops(file.Rooms);
+        var inLoop = FindRoomsInLoops(dto.Rooms);
         if (inLoop.Count > 0)
             problems.Add($"Exits must only lead forward, but these rooms are in a loop: [{string.Join(", ", inLoop)}].");
 
@@ -96,7 +97,7 @@ internal static class DungeonValidator
     }
 
     // start room = a room no exit points to
-    internal static List<string> FindStartIds(List<DungeonFile.RoomEntry> rooms)
+    internal static List<string> FindStartIds(List<RoomDto> rooms)
     {
         // SelectMany = flatten all the exit lists into one
         var targets = rooms.SelectMany(r => r.Exits).ToHashSet();
@@ -106,7 +107,7 @@ internal static class DungeonValidator
     // finds rooms stuck in a loop (kahn's algorithm)
     // idea: keep removing rooms nothing points to. whatever is left is in a loop (or stuck behind one)
     // no loops = everything gets removed = empty list
-    private static List<string> FindRoomsInLoops(List<DungeonFile.RoomEntry> rooms)
+    private static List<string> FindRoomsInLoops(List<RoomDto> rooms)
     {
         // how many exits point to each room
         var incoming = rooms.ToDictionary(r => r.Id, _ => 0);

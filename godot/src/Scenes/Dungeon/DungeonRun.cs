@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DungeonDelver.Model.Dungeon;
-using DungeonDelver.Model.Dungeon.Layout;
-using DungeonDelver.Model.Dungeon.Loading;
+using DungeonDelver.Core.Loading;
+using DungeonDelver.Core.Layout;
 using Godot;
 using FileAccess = Godot.FileAccess;
 

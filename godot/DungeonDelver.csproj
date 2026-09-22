@@ -5,10 +5,17 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="src\Resources\goblin.png" />
-    <Content Include="src\Resources\readme\Loader_2.png" />
-    <Content Include="src\Resources\slime1.png" />
-    <Content Include="src\Resources\slime2.png" />
-    <Content Include="src\Scenes\UI\delete_me.txt" />
+    <Content Include="Assets\goblin.png" />
+    <Content Include="Assets\slime1.png" />
+    <Content Include="Assets\slime2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\Core\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="src\Resources\readme\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="src\Resources\readme\**" />
   </ItemGroup>
 </Project>
