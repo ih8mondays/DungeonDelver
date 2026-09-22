@@ -5,7 +5,10 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="src\Resources\NewFile1.txt" />
+    <Content Include="src\Resources\goblin.png" />
+    <Content Include="src\Resources\readme\Loader_2.png" />
+    <Content Include="src\Resources\slime1.png" />
+    <Content Include="src\Resources\slime2.png" />
     <Content Include="src\Scenes\UI\delete_me.txt" />
   </ItemGroup>
   <ItemGroup>

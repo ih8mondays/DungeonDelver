@@ -5,11 +5,10 @@ using DungeonDelver.Model.Dungeon;
 
 namespace DungeonDelver.Core.Loading;
 
-// "type" in the JSON -> the Room class it builds.
-// new room type = add one line to Factories, nothing else changes.
+/// new room type = add one line to Factories, nothing else changes.
 internal static class RoomFactory
 {
-    // Func<in, out> = delegate. same as java Function<RoomDto, Room>
+    // Func<in, out> = delegate
     private static readonly Dictionary<string, Func<RoomDto, Room>> Factories = new() {
         ["combat"] = r => new CombatRoom(r.Id, r.Exits),
         ["shop"] = r => new ShopRoom(r.Id, r.Exits)

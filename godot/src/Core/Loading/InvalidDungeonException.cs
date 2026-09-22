@@ -4,12 +4,12 @@ using System.Linq;
 
 namespace DungeonDelver.Core.Loading;
 
-// our own exception. Problems = everything that's wrong, not just the first thing
+/// Problems = everything that's wrong, not just the first thing
 public class InvalidDungeonException : Exception
 {
     public IReadOnlyList<string> Problems { get; }
 
-    // the public constructors just pass on to the private one. ": this(...)" = java this(...)
+    // the public constructors just pass on to the private one.
     public InvalidDungeonException(string source, IEnumerable<string> problems)
         : this(source, problems.ToList(), null)
     {
