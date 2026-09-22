@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace DungeonDelver.Model.Dungeon.Loading.Dto;
+namespace DungeonDelver.Model.Dto.DungeonDto;
 
 // One room as written in the file.
 public record RoomDto(

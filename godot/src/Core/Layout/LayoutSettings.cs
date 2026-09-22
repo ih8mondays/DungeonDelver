@@ -1,4 +1,4 @@
-namespace DungeonDelver.Model.Dungeon.Layout;
+namespace DungeonDelver.Core.Layout;
 
 /// The knobs for TieredLayout. All distances are in pixels.
 /// "record" = a class that's mostly just data. "init" = can only be set when it's created.

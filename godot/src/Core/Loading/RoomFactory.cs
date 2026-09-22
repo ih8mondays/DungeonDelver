@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
-using DungeonDelver.Model.Dungeon.Loading.Dto;
+using DungeonDelver.Model.Dto.DungeonDto;
+using DungeonDelver.Model.Dungeon;
 
-namespace DungeonDelver.Model.Dungeon.Loading;
+namespace DungeonDelver.Core.Loading;
 
 // "type" in the JSON -> the Room class it builds.
 // new room type = add one line to Factories, nothing else changes.

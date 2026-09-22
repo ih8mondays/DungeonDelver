@@ -1,4 +1,4 @@
-using DungeonDelver.Model.Creatures.CreatureDto;
+using DungeonDelver.Model.Dto.CreatureDto;
 
 namespace DungeonDelver.Model.Creatures;
 

@@ -1,13 +1,13 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using DungeonDelver.Model.Dungeon.Loading.Dto;
+using DungeonDelver.Model.Dto.DungeonDto;
 
-namespace DungeonDelver.Model.Dungeon.Loading;
+namespace DungeonDelver.Core.Loading;
 
-/// json text -> DungeonDto (plain data, no real rooms yet).
+/// JSON text -> DungeonDto (plain data, no real rooms yet).
 internal static class DungeonJsonParser
 {
-    // settings for the .NET json reader
+    // settings for the .NET JSON reader
     private static readonly JsonSerializerOptions JsonOptions = new() {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,              // "exits" in json = Exits in c#
         ReadCommentHandling = JsonCommentHandling.Skip,                 // allow // comments in map files

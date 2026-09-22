@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DungeonDelver.Model.Dungeon;
 using Godot;
 
-namespace DungeonDelver.Model.Dungeon.Layout;
+namespace DungeonDelver.Core.Layout;
 
 /// Turns a DungeonMap into screen positions: tiers become columns, rooms inside a tier become rows.
 /// No scene tree and no engine in here - only Vector2, which is plain managed math - so this runs

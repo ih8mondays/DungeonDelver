@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using DungeonDelver.Model.Dungeon.Loading.Dto;
+using DungeonDelver.Model.Dto.DungeonDto;
 
-namespace DungeonDelver.Model.Dungeon.Loading;
+namespace DungeonDelver.Core.Loading;
 
 /// all the rules a map file has to follow.
 internal static class DungeonValidator

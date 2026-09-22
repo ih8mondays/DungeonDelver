@@ -8,4 +8,7 @@
     <Content Include="src\Resources\NewFile1.txt" />
     <Content Include="src\Scenes\UI\delete_me.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\Core\" />
+  </ItemGroup>
 </Project>

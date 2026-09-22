@@ -1,8 +1,9 @@
 using System;
 using System.Linq;
-using DungeonDelver.Model.Dungeon.Loading.Dto;
+using DungeonDelver.Model.Dto.DungeonDto;
+using DungeonDelver.Model.Dungeon;
 
-namespace DungeonDelver.Model.Dungeon.Loading;
+namespace DungeonDelver.Core.Loading;
 
 /// json text -> DungeonDto -> check rules -> DungeonMap
 public static class DungeonLoader {
