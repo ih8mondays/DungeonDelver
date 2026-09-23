@@ -5,7 +5,8 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="Assets\goblin.png" />
+    <Content Include="Assets\goblin1.png" />
+    <Content Include="Assets\goblin2.png" />
     <Content Include="Assets\slime1.png" />
     <Content Include="Assets\slime2.png" />
   </ItemGroup>

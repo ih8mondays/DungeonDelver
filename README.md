@@ -6,7 +6,7 @@ Dungeons are defined as JSON map files (`godot/maps/`) and loaded into a room gr
 at runtime — rooms are nodes, exits are directed edges, and combat rooms have
 to be cleared before you can move on.
 
-![Map loader showing the Crypt of the Ember King room graph](godot/src/Resources/readme/Loader_2.png)
+![Map loader showing the Crypt of the Ember King room graph](.github/images/Loader_2.png)
 
 ## Layout
 
