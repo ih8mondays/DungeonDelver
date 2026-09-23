@@ -7,4 +7,5 @@ namespace DungeonDelver.Model.Dto.DungeonDto;
 public record RoomDto(
     [property: JsonRequired] string Id, // Unique name of the room, e.g. "cistern".
     [property: JsonRequired] string Type,
-    [property: JsonRequired] List<string> Exits); // Ids of the rooms you can walk to next. Empty list = the end room.
+    [property: JsonRequired] List<string> Exits,  // Ids of the rooms you can walk to next. Empty list = the end room.
+    List<string> Monsters = null);                // Version 2+, combat rooms only. Creature ids (see creatures/), repeat an id for more than one.

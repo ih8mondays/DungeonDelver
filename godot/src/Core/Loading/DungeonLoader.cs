@@ -9,6 +9,7 @@ namespace DungeonDelver.Core.Loading;
 public static class DungeonLoader {
     
     // re-exported so callers don't have to know where the rules live
+    public const int MinVersion = DungeonValidator.MinVersion;
     public const int CurrentVersion = DungeonValidator.CurrentVersion;
     public const int MaxExits = DungeonValidator.MaxExits;
     

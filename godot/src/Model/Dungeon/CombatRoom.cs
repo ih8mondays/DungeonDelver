@@ -1,25 +1,23 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace DungeonDelver.Model.Dungeon;
 
 public class CombatRoom : Room
 {
-    // TODO: creatures to fight, once the Creature class exists.
+    // ids of the creatures to fight, e.g. ["goblin", "slime"].
+    // ids, not Monster objects: fresh monsters get built by CreatureFactory when the fight starts.
+    public IReadOnlyList<string> MonsterIds { get; }
     
     public bool IsCleared { get; private set; }
     public sealed override bool CanLeave => IsCleared;   // Only leave if cleared
 
 
-    public CombatRoom(string id, IEnumerable<string> exits) : base(id, exits) {
-        
+    public CombatRoom(string id, IEnumerable<string> exits, IEnumerable<string> monsterIds = null) : base(id, exits) {
+        MonsterIds = (monsterIds ?? []).ToArray();   // own copy, same as exits
     }
     
     public void Clear() => IsCleared = true;
-    
-    // Later something like this:
-    // public CombatRoom(string id, IEnumerable<string> exits, IEnumerable<Creature> creatures)
-    //    : base(id, exits) {
-    // _creatures = creatures.ToList(); }
     
 
     public override void Enter() {

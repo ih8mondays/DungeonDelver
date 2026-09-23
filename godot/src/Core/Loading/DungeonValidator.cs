@@ -7,7 +7,8 @@ namespace DungeonDelver.Core.Loading;
 /// all the rules a map file has to follow.
 internal static class DungeonValidator
 {
-    internal const int CurrentVersion = 1;
+    internal const int MinVersion = 1;       // oldest map format we still read
+    internal const int CurrentVersion = 2;   // v2 = rooms can have "monsters"
     internal const int MaxExits = 3;    // max doors per room
 
     /// returns every broken rule. empty list = map is fine
@@ -15,8 +16,8 @@ internal static class DungeonValidator
     {
         var problems = new List<string>();
 
-        if (dto.Version != CurrentVersion)
-            problems.Add($"Unsupported version {dto.Version} (this game reads version {CurrentVersion}).");
+        if (dto.Version < MinVersion || dto.Version > CurrentVersion)
+            problems.Add($"Unsupported version {dto.Version} (this game reads versions {MinVersion}-{CurrentVersion}).");
 
         if (string.IsNullOrWhiteSpace(dto.Name))
             problems.Add("Map has no name.");
@@ -45,6 +46,18 @@ internal static class DungeonValidator
 
             if (!RoomFactory.IsKnownType(room.Type))
                 problems.Add($"Room {name} has unknown type '{room.Type}'. Allowed: {string.Join(", ", RoomFactory.KnownTypes)}.");
+
+            // monsters: only from version 2, only in combat rooms, no blank ids
+            // (whether the ids are real creatures is checked once creatures get loaded)
+            if (room.Monsters != null)
+            {
+                if (dto.Version < 2)
+                    problems.Add($"Room {name} has monsters, which need version 2 (file is version {dto.Version}).");
+                if (room.Type != "combat")
+                    problems.Add($"Room {name} is a '{room.Type}' room and can't have monsters.");
+                if (room.Monsters.Any(string.IsNullOrWhiteSpace))
+                    problems.Add($"Room {name} has an empty monster id.");
+            }
 
             if (room.Exits == null)
             {

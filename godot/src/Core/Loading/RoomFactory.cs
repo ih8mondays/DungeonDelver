@@ -10,7 +10,7 @@ internal static class RoomFactory
 {
     // Func<in, out> = delegate
     private static readonly Dictionary<string, Func<RoomDto, Room>> Factories = new() {
-        ["combat"] = r => new CombatRoom(r.Id, r.Exits),
+        ["combat"] = r => new CombatRoom(r.Id, r.Exits, r.Monsters),
         ["shop"] = r => new ShopRoom(r.Id, r.Exits)
     };
 

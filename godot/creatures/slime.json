@@ -1,0 +1,7 @@
+{
+  "id": "slime",
+  "name": "Slime",
+  "maxHp": 15,
+  "attackPower": 2,
+  "sprite": "slime1"
+}

@@ -15,7 +15,7 @@ namespace DungeonDelver.Scenes.Dungeon;
 
 public partial class DungeonRun : Control {
     [Export(PropertyHint.File, "*.json")]
-    public string MapPath { get; set; } = "res://maps/crypt_of_the_ember_king.json";
+    public string MapPath { get; set; } = "res://maps/crypt_of_the_ember_king_v2.json";
 
     [Export] public float TierSpacing { get; set; } = 180f;
     [Export] public float RoomSpacing { get; set; } = 120f;
