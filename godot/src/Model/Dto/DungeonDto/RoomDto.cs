@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace DungeonDelver.Model.Dto.DungeonDto;
 
-// One room as written in the file.
+/// One room as written in the file.
 public record RoomDto(
     [property: JsonRequired] string Id, // Unique name of the room, e.g. "cistern".
     [property: JsonRequired] string Type,
