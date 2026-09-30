@@ -1,11 +1,7 @@
 namespace DungeonDelver.Model.StatusEffects;
 
-// "rounds" in the json: how long it lasts. 0 = permanent (never expires, carries over between rooms).
-// the number fields (bonusDamage ...) default to 0, so an entry only lists what it actually does.
-
-/// Something that sits on a creature for a few rounds. Defined by its numbers, read from data/statuses.json.
+/// Read from data/statuses.json.
 /// The hooks are virtual: an effect that needs real logic (stun, thorns ...) can subclass and override them.
-/// Live state (RemainingRounds) means: never share one instance between creatures,
 /// always build a fresh one from the catalog.
 public class StatusEffect(int id, string name, string icon, int rounds,
                           int bonusDamage = 0, int bonusDefense = 0, int bonusHealing = 0, int hpPerRound = 0) {
