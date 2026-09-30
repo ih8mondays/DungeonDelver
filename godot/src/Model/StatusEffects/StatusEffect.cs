@@ -1,32 +1,29 @@
 namespace DungeonDelver.Model.StatusEffects;
 
-// Status effect type ids, used as "type" in data/statuses.json:
-//   1 = DamageBoost   (+amount damage dealt)
-//   2 = DefenseBoost  (+amount defense)
-//   3 = Regen         (heal amount per round)
-//   4 = Burn          (damage amount per round)
-//
 // "rounds" in the json: how long it lasts. 0 = permanent (never expires, carries over between rooms).
+// the number fields (bonusDamage ...) default to 0, so an entry only lists what it actually does.
 
-/// Something that sits on a creature for a few rounds.
-/// Every hook does nothing by default, subclasses override only what they need.
+/// Something that sits on a creature for a few rounds. Defined by its numbers, read from data/statuses.json.
+/// The hooks are virtual: an effect that needs real logic (stun, thorns ...) can subclass and override them.
 /// Live state (RemainingRounds) means: never share one instance between creatures,
 /// always build a fresh one from the catalog.
-public abstract class StatusEffect(int id, string name, int rounds) {
+public class StatusEffect(int id, string name, string icon, int rounds,
+                          int bonusDamage = 0, int bonusDefense = 0, int bonusHealing = 0, int hpPerRound = 0) {
 
 	public int Id { get; } = id;
 	public string Name { get; } = name;
+	public string Icon { get; } = icon; // just a string path
 	public bool IsPermanent { get; } = rounds == 0;	// rounds == 0 means permanent.
 	public int RemainingRounds { get; private set; } = rounds;
 
-	// read by the damage calculation
-	public virtual int BonusDamage() => 0;
-	public virtual int BonusDefense() => 0;
-	public virtual int BonusHealing() => 0;
-	public virtual int HpChangePerRound() => 0;
+	// read by the damage calculation. negative numbers are fine (a curse)
+	public virtual int BonusDamage() => bonusDamage;
+	public virtual int BonusDefense() => bonusDefense;
+	public virtual int BonusHealing() => bonusHealing;
+	public virtual int HpChangePerRound() => hpPerRound;  // hp gained (+) or lost (-) at the end of every round.
 
 	// called once per round by the owner, after the round's hp changes have been applied.
-	// returns true when the effect has run out and the owner should remove it
+	/// returns true = remove it
 	public bool AdvanceRound() {
 		if (IsPermanent) return false;
 		RemainingRounds--;
