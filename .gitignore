@@ -14,3 +14,4 @@ artifacts/
 # OS junk
 .DS_Store
 Thumbs.db
+/Claude outputs/project-instructions.md
