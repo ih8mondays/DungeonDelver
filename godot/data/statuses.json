@@ -1,0 +1,7 @@
+[
+  { "id": 1, "name": "Battle Cry",   "type": 1, "amount": 20, "rounds": 3 },
+  { "id": 2, "name": "Iron Skin",    "type": 2, "amount": 10, "rounds": 3 },
+  { "id": 3, "name": "Regeneration", "type": 3, "amount": 20, "rounds": 2 },
+  { "id": 4, "name": "Burn",         "type": 4, "amount": 5,  "rounds": 4 },
+  { "id": 5, "name": "Blessing",     "type": 1, "amount": 5,  "rounds": 0 }
+]
