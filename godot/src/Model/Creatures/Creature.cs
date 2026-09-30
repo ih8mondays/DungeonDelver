@@ -61,7 +61,7 @@ public abstract class Creature {
 	    ArgumentNullException.ThrowIfNull(ability);
 	    
 	    if (_abilities.Contains(ability)) { 
-		    throw new Exception("Ability already exists on creature: " + Name);
+		    throw new Exception("Creature has already learned this ability: " + Name);
 	    }
 	    
         _abilities.Add(ability);
