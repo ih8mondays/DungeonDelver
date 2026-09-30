@@ -1,0 +1,8 @@
+[
+  { "id": 1, "name": "Battle Cry",   "rounds": 3, "bonusDamage": 20,  "icon": "Assets/icons/battle_cry.png" },
+  { "id": 2, "name": "Iron Skin",    "rounds": 3, "bonusDefense": 10, "icon": "Assets/icons/iron_skin.png" },
+  { "id": 3, "name": "Regeneration", "rounds": 2, "hpPerRound": 20,   "icon": "Assets/icons/regeneration.png" },
+  { "id": 4, "name": "Burn",         "rounds": 4, "hpPerRound": -5,   "icon": "Assets/icons/burn.png" },
+  { "id": 5, "name": "Blessing",     "rounds": 0, "bonusDamage": 5,   "icon": "Assets/icons/blessing.png" },
+  { "id": 6, "name": "Berserk",      "rounds": 3, "bonusDamage": 15, "bonusDefense": -5, "icon": "Assets/icons/berserk.png" }
+]
