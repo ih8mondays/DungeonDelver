@@ -1,8 +1,8 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using DungeonDelver.Model.Dto.DungeonDto;
+using DungeonDelver.Core.Dto.DungeonDto;
 
-namespace DungeonDelver.Core.Loading;
+namespace DungeonDelver.Core.Loading.Dungeon;
 
 /// JSON text -> DungeonDto (plain data, no real rooms yet).
 internal static class DungeonJsonParser

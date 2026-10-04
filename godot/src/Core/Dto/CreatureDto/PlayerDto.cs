@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace DungeonDelver.Model.Dto.CreatureDto;
+namespace DungeonDelver.Core.Dto.CreatureDto;
 
 // For JSON purposes ->
 // var data = JsonSerializer.Deserialize<CreatureData>(json)!;

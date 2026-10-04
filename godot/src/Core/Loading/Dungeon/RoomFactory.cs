@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using DungeonDelver.Model.Dto.DungeonDto;
+using DungeonDelver.Core.Dto.DungeonDto;
 using DungeonDelver.Model.Dungeon;
 
-namespace DungeonDelver.Core.Loading;
+namespace DungeonDelver.Core.Loading.Dungeon;
 
 /// new room type = add one line to Factories, nothing else changes.
 internal static class RoomFactory

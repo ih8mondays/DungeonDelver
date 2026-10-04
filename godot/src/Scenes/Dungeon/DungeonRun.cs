@@ -4,6 +4,7 @@ using System.Linq;
 using DungeonDelver.Model.Dungeon;
 using DungeonDelver.Core.Loading;
 using DungeonDelver.Core.Layout;
+using DungeonDelver.Core.Loading.Dungeon;
 using Godot;
 using FileAccess = Godot.FileAccess;
 

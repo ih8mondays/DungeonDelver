@@ -1,6 +1,7 @@
+using DungeonDelver.Core.Dto.DungeonDto;
 using DungeonDelver.Model.Dungeon;
 using DungeonDelver.Core.Loading;
-using DungeonDelver.Model.Dto.DungeonDto;
+using DungeonDelver.Core.Loading.Dungeon;
 
 namespace DungeonDelver.Tests;
 

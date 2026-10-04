@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace DungeonDelver.Model.Dto.DungeonDto;
+namespace DungeonDelver.Core.Dto.DungeonDto;
 
 // DungeonLoader reads the JSON into this, then builds the real rooms from it.
 public record DungeonDto(

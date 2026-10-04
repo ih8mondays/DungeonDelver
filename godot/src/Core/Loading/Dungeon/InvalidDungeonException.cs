@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DungeonDelver.Core.Loading;
+namespace DungeonDelver.Core.Loading.Dungeon;
 
 /// Problems = everything that's wrong, not just the first thing
 public class InvalidDungeonException : Exception
