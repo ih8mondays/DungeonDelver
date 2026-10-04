@@ -244,8 +244,8 @@ public class CreatureAbilityTests {
     public void AddAbility_ExistingAbility_Fails() {
         // Arrange
         var creature = new TestCreature();
-        var abilityOne = new TestAbility();
-        var abilityTwo = new TestAbility();
+        var abilityOne = new TestAbility("Beep");
+        var abilityTwo = new TestAbility("Boop");
         
         // Act
         creature.AddAbility(abilityOne);
@@ -282,11 +282,9 @@ public class CreatureAbilityTests {
     private sealed class TestAbility(
         string name = "TestAbility",
         int baseDamage = 10,
-        float attackPowerScaling = 1,
-        float procChance = 1,
+        int attackPowerScalingPercent = 100,
+        int procChancePercent = 100,
         string iconId = "TestIcon",
-        string spriteId = "TestId") 
-        : Ability(name, baseDamage, attackPowerScaling, procChance, iconId, spriteId) {
-        public override void Use(Creature user, Creature target) { }
-    }
+        string spriteId = "TestId")
+        : Ability(name, baseDamage, attackPowerScalingPercent, procChancePercent, iconId, spriteId) { }
 }

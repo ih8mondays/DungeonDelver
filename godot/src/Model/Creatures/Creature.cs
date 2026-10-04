@@ -94,13 +94,20 @@ public class Creature {
 	    return _abilities.RemoveAll(a => a.Name == ability.Name) > 0;
     }
     
-    //public void AddStatusEffect(StatusEffect statusEffect) {
-	//    ArgumentNullException.ThrowIfNull(statusEffect);
-	//    if (_statusEffect.Any(s => s.Name == statusEffect.Name)) { 
-	//	    throw new InvalidOperationException("Creature already knows this ability: " + ability.Name);
-	//    }
-	//    
-	//    _abilities.Add(ability);
-    //}
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="InvalidOperationException">Throws if ability already exists on the creature</exception>
+    public void AddStatusEffect(StatusEffect statusEffect) {
+	    ArgumentNullException.ThrowIfNull(statusEffect);
+	    if (_statusEffects.Any(s => s.Name == statusEffect.Name)) { 
+		    throw new InvalidOperationException("Creature already knows this ability: " + statusEffect.Name);
+	    }
+	    
+	    _statusEffects.Add(statusEffect);
+    }
+    
+    /// <returns>Returns true if removal was successful.</returns>
+    public bool RemoveStatusEffect(StatusEffect statusEffect) {
+	    return _abilities.RemoveAll(s => s.Name == statusEffect.Name) > 0;
+    }
     
 }
