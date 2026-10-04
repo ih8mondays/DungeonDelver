@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using DungeonDelver.Model.Abilities;
 
 namespace DungeonDelver.Model.Creatures;
 
 public readonly record struct HpChangedEventArgs(int OldHp, int NewHp, int MaxHp);
 
-public abstract class Creature {
+public class Creature {
 	
     public string Name { get; }
     public int MaxHp { get; }
@@ -22,7 +23,7 @@ public abstract class Creature {
 	public event EventHandler? Died;
 
 	
-	protected Creature(string name,  int maxHp, int attackPower, int? currentHp = null) {
+	public Creature(string name,  int maxHp, int attackPower, int? currentHp = null) {
 		
 		ArgumentException.ThrowIfNullOrWhiteSpace(name);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maxHp);
@@ -81,10 +82,8 @@ public abstract class Creature {
     }
 	
     public void AddAbility(Ability ability) {
-	    
 	    ArgumentNullException.ThrowIfNull(ability);
-	    
-	    if (_abilities.Contains(ability)) { 
+	    if (_abilities.Any(a => a.Name == ability.Name)) { 
 		    throw new InvalidOperationException("Creature already knows this ability: " + ability.Name);
 	    }
 	    
@@ -92,7 +91,16 @@ public abstract class Creature {
     }
     
     public bool RemoveAbility(Ability ability) {
-	    return _abilities.Remove(ability);
+	    return _abilities.RemoveAll(a => a.Name == ability.Name) > 0;
     }
+    
+    //public void AddStatusEffect(StatusEffect statusEffect) {
+	//    ArgumentNullException.ThrowIfNull(statusEffect);
+	//    if (_statusEffect.Any(s => s.Name == statusEffect.Name)) { 
+	//	    throw new InvalidOperationException("Creature already knows this ability: " + ability.Name);
+	//    }
+	//    
+	//    _abilities.Add(ability);
+    //}
     
 }

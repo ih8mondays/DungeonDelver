@@ -7,20 +7,20 @@ namespace DungeonDelver.Model.Abilities;
 public abstract class Ability {
     
     public string Name { get; }
-    protected int BaseDamage;
-    protected float AttackPowerScaling;
+    public int BaseDamage { get; }
+    public float AttackPowerScaling { get; }
     protected float ProcChance;
     protected List<StatusEffect> AppliedStatusEffects;
     protected string IconId;
     protected string SpriteId;
 
     protected Ability(string name, int baseDamage, float attackPowerScaling, float procChance, string iconId, string spriteId, List<StatusEffect> statusEffects = null) {
-        if (string.IsNullOrWhiteSpace(name)) { throw new ArgumentException("Name cannot be empty"); }
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(baseDamage);
-        if (attackPowerScaling < 0 || attackPowerScaling > 1) { throw new ArgumentOutOfRangeException("AttackPowerScaling must be between 0 and 1"); }
-        if (procChance < 0 || procChance > 1) { throw new ArgumentOutOfRangeException("ProcChance must be between 0 and 1"); }
-        if (string.IsNullOrWhiteSpace(iconId)) { throw new ArgumentException("IconId cannot be empty"); }
-        if (string.IsNullOrWhiteSpace(spriteId)) { throw new ArgumentException("SpriteId cannot be empty"); }
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+        ArgumentOutOfRangeException.ThrowIfNegative(baseDamage);
+        if (attackPowerScaling < 0 || attackPowerScaling > 1) throw new ArgumentOutOfRangeException(nameof(attackPowerScaling));
+        if (procChance < 0 || procChance > 1) throw new ArgumentOutOfRangeException(nameof(procChance));
+        if (string.IsNullOrWhiteSpace(iconId)) throw new ArgumentException("IconId cannot be empty");
+        if (string.IsNullOrWhiteSpace(spriteId)) throw new ArgumentException("SpriteId cannot be empty");
         
         Name = name;
         BaseDamage = baseDamage;
@@ -32,16 +32,5 @@ public abstract class Ability {
     }
     
     public abstract void Use(Creature user, Creature target);
-
-    public int CalculateDamage(Creature user) {
-        return (int)(BaseDamage + user.AttackPower * AttackPowerScaling);
-    }
-
-    // Used in Creature.AddAbility() -> List.Contains()
-    // We don't want duplicate abilities... for now
-    public bool Equals(Ability other) {
-        //TODO needed for creature.AddAbility()
-        return true;
-    }
     
 }
