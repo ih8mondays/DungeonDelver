@@ -4,26 +4,28 @@ using Xunit;
 
 namespace DungeonDelver.Tests;
 
-public class CreatureAbilityTests
-{
+public class CreatureAbilityTests {
     
     [Fact]
-    public void SanityCheck() => Assert.True(true);
-
+    public void Constructor_ThrowsOnWrongInput() {
+        Assert.Throws<ArgumentOutOfRangeException>(() => new TestCreature(10, 15));
+    }
+    
     [Fact]
-    public void Damage_Creature_TakesDamage() {
+    public void DamageCreature_TakesDamage() {
         // Arrange
-        var creature = new TestCreature();
+        var creature = new TestCreature(10);
+        int testDamage = 5;
         
         // Act
-        creature.Damage(5);
+        creature.Damage(testDamage);
         
         // Assert
-        Assert.Equal(creature.MaxHP - 5, creature.CurrentHP);
+        Assert.Equal(creature.MaxHp - testDamage, creature.CurrentHp);
     }
 
     [Fact]
-    public void Damage_Creature_NegativeValue_Throws() {
+    public void DamageCreature_NegativeValueThrows() {
         // Arrange
         var creature = new TestCreature();
         
@@ -34,7 +36,7 @@ public class CreatureAbilityTests
     }
 
     [Fact]
-    public void Damage_Creature_TakesDamage_Dies() {
+    public void DamageCreature_TakesDamageAndDies() {
         // Arrange
         var creatureOne = new TestCreature();
         var creatureTwo = new TestCreature();
@@ -50,9 +52,23 @@ public class CreatureAbilityTests
         Assert.False(creatureTwo.IsAlive);
         Assert.False(creatureThree.IsAlive);
     }
+    
+    [Fact]
+    public void DamageDeadCreature() {
+        // Arrange
+        var creature = new TestCreature();
+        creature.Damage(creature.MaxHp);
+        
+        // Act
+        var result = creature.Damage(10);
+        
+        // Assert
+        Assert.Equal(0, result);
+
+    }
 
     [Fact]
-    public void Damage_DeadCreature_Has_NonNegativeHP() {
+    public void DamageDeadCreature_HasNonNegativeHP() {
         // Arrange
         var creatureOne = new TestCreature();
         var creatureTwo = new TestCreature();
@@ -62,39 +78,119 @@ public class CreatureAbilityTests
         creatureTwo.Damage(100);
         
         // Assert
-        Assert.True(creatureOne.CurrentHP >= 0);
-        Assert.True(creatureTwo.CurrentHP >= 0);
+        Assert.True(creatureOne.CurrentHp >= 0);
+        Assert.True(creatureTwo.CurrentHp >= 0);
     }
 
     [Fact]
-    public void Heal_Creature_IsHealed() {
+    public void DamageCreature_MaxValue() {
+        // Arrange
+        var startHp = 15;
+        var creature = new TestCreature(startHp);
+        
+        // Act
+        var result = creature.Damage(int.MaxValue);
+        
+        // Assert
+        Assert.Equal(startHp, result);
+        Assert.Equal(0, creature.CurrentHp);
+    }
+
+    [Fact]
+    public void DamageCreature_RaisesEvent() {
+        //TODO
+    }
+    
+    [Fact]
+    public void DamageDeadCreature_RaisesNoEvents() {
         // Arrange
         var creature = new TestCreature();
-        var startHP = creature.CurrentHP;
+        creature.Damage(creature.MaxHp);
+        
+        var events = new List<string>();
+        creature.HpChanged += (_, _) => events.Add("HpChanged");
+        creature.Died      += (_, _) => events.Add("Died");
+        
+        // Act
+        var damage = creature.Damage(5);
+        
+        // Assert
+        Assert.Equal(0, damage);
+        Assert.Empty(events);
+    }
+
+    [Fact]
+    public void HealCreature_IsHealed() {
+        // Arrange
+        var creature = new TestCreature();
+        var startHP = creature.CurrentHp;
+        var healing = 1;
         
         // Act
         creature.Damage(2);
-        creature.Heal(1);
+        var result = creature.Heal(healing);
 
         // Assert
-        Assert.Equal(startHP - 1, creature.CurrentHP);
+        Assert.Equal(healing, result);
+        Assert.Equal(startHP - healing, creature.CurrentHp);
     }
 
     [Fact]
-    public void Heal_DeadCreature_Fails() {
+    public void HealDeadCreature_Fails() {
         // Arrange
         var creature = new TestCreature();
         
         // Act
-        creature.Damage(creature.CurrentHP);
-        creature.Heal(1);
+        creature.Damage(creature.CurrentHp);
+        var result = creature.Heal(1);
 
         // Assert
-        Assert.Equal(0, creature.CurrentHP);
+        Assert.Equal(0, result);
+        Assert.Equal(0, creature.CurrentHp);
     }
 
     [Fact]
-    public void Heal_Creature_NegativeValue_Throws() {
+    public void HealCreature_RaisesEvent() {
+        //TODO
+    }
+    
+    [Fact]
+    public void HealFullHpCreature_RaisesNoEvents() {
+        // Arrange
+        var creature = new TestCreature();
+        var events = new List<string>();
+        creature.HpChanged += (_, _) => events.Add("HpChanged");
+        creature.Died      += (_, _) => events.Add("Died");
+        
+        // Act
+        var healed = creature.Heal(5);
+        
+        // Assert
+        Assert.Equal(0, healed);
+        Assert.Empty(events);
+    }
+    
+    [Fact]
+    public void HealDeadCreature_RaisesNoEvents() {
+        // Arrange
+        var creature = new TestCreature(10);
+        creature.Damage(creature.MaxHp);
+        
+        var events = new List<string>();
+        creature.HpChanged += (_, _) => events.Add("HpChanged");
+        creature.Died      += (_, _) => events.Add("Died");
+        
+        // Act
+        var healed = creature.Heal(5);
+        
+        // Assert
+        Assert.False(creature.IsAlive);
+        Assert.Equal(0, healed);
+        Assert.Empty(events);
+    }
+
+    [Fact]
+    public void HealCreature_NegativeValueThrows() {
         // Arrange
         var creature = new TestCreature();
         
@@ -103,17 +199,31 @@ public class CreatureAbilityTests
     }
 
     [Fact]
-    public void Heal_Creature_Not_Overhealed() {
+    public void HealCreature_NotOverhealed() {
         // Arrange
         var creature = new TestCreature();
-        var startHP = creature.CurrentHP;
+        var startHp = creature.CurrentHp;
         
         // Act
         creature.Heal(1);
         
         // Assert
-        Assert.Equal(startHP, creature.CurrentHP);
+        Assert.Equal(startHp, creature.CurrentHp);
         
+    }
+
+    [Fact]
+    public void HealCreature_MaxValue()
+    {
+        // Arrange
+        var creature = new TestCreature(200,1);
+        
+        // Act
+        var result = creature.Heal(int.MaxValue);
+        
+        // Assert
+        Assert.Equal(199, result);
+        Assert.Equal(creature.MaxHp, creature.CurrentHp);
     }
     
     [Fact]
@@ -153,26 +263,30 @@ public class CreatureAbilityTests
         
         // Act
         creature.AddAbility(abilityOne);
-        creature.RemoveAbility(abilityOne);
+        var response = creature.RemoveAbility(abilityOne);
         
         // Assert
+        Assert.True(response);
         Assert.Empty(creature.Abilities);
     }
     
 
     // Minimal test doubles, only used by this test class
     private sealed class TestCreature(
-        string name = "TestCreature", 
-        int maxHP = 10, 
-        int attackPower = 1)
-        : Creature(name, maxHP, attackPower);
+        int maxHp = 10,
+        int? currentHp = null,
+        int attackPower = 1,
+        string name = "TestCreature")
+        : Creature(name, maxHp, attackPower, currentHp);
 
     private sealed class TestAbility(
         string name = "TestAbility",
         int baseDamage = 10,
+        float attackPowerScaling = 1,
+        float procChance = 1,
         string iconId = "TestIcon",
         string spriteId = "TestId") 
-        : Ability(name, baseDamage, iconId, spriteId) {
-        public override void Use() { }
+        : Ability(name, baseDamage, attackPowerScaling, procChance, iconId, spriteId) {
+        public override void Use(Creature user, Creature target) { }
     }
 }

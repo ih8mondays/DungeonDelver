@@ -14,9 +14,9 @@ public class StatusEffect(int id, string name, string icon, int rounds,
 
 	// read by the damage calculation. negative numbers are fine (a curse)
 	public virtual int BonusDamage() => bonusDamage;
-	public virtual int BonusDefense() => bonusDefense;
-	public virtual int BonusHealing() => bonusHealing;
-	public virtual int HpChangePerRound() => hpPerRound;  // hp gained (+) or lost (-) at the end of every round.
+	// public virtual int BonusDefense() => bonusDefense;
+	// public virtual int BonusHealing() => bonusHealing;
+	// public virtual int HpChangePerRound() => hpPerRound;  // hp gained (+) or lost (-) at the end of every round.
 
 	// called once per round by the owner, after the round's hp changes have been applied.
 	/// returns true = remove it

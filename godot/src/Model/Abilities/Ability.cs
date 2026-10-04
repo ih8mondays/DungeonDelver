@@ -6,7 +6,7 @@ namespace DungeonDelver.Model.Abilities;
 
 public abstract class Ability {
     
-    protected string Name;
+    public string Name { get; }
     protected int BaseDamage;
     protected float AttackPowerScaling;
     protected float ProcChance;
@@ -40,6 +40,7 @@ public abstract class Ability {
     // Used in Creature.AddAbility() -> List.Contains()
     // We don't want duplicate abilities... for now
     public bool Equals(Ability other) {
+        //TODO needed for creature.AddAbility()
         return true;
     }
     
