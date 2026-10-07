@@ -16,7 +16,7 @@ public class CombatCalculator {
         ArgumentNullException.ThrowIfNull(ability);
         
         // Overflow protection might be overkill, but better safe than sorry.
-        long raw = ability.BaseDamage + (long)attackPower * ability.AttackPowerScalingPercent / 100;
+        var raw = ability.BaseDamage + (long)attackPower * ability.AttackPowerScalingPercent / 100;
         return (int)Math.Clamp(raw, 0, int.MaxValue);
     }
 }
