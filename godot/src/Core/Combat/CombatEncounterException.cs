@@ -2,6 +2,4 @@ using System;
 
 namespace DungeonDelver.Core.Combat;
 
-public class CombatEncounterException : ArgumentException {
-    
-}
+public class CombatEncounterException(string message) : ArgumentException(message);
