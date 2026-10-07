@@ -107,7 +107,7 @@ public class Creature {
     
     /// <returns>Returns true if removal was successful.</returns>
     public bool RemoveStatusEffect(StatusEffect statusEffect) {
-	    return _abilities.RemoveAll(s => s.Name == statusEffect.Name) > 0;
+	    return _statusEffects.RemoveAll(s => s.Name == statusEffect.Name) > 0;
     }
     
 }
