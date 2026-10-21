@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using DungeonDelver.Core.Dto.DungeonDto;
+using DungeonDelver.Core.Loading.Creatures;
 using DungeonDelver.Model.Dungeon;
 
 namespace DungeonDelver.Core.Loading.Dungeon;
@@ -10,7 +12,7 @@ internal static class RoomFactory
 {
     // Func<in, out> = delegate
     private static readonly Dictionary<string, Func<RoomDto, Room>> Factories = new() {
-        ["combat"] = r => new CombatRoom(r.Id, r.Exits),
+        ["combat"] = r => new CombatRoom(r.Id, r.Exits, r.Creatures.Select(CreatureMapper.ToCreature)),
         ["shop"] = r => new ShopRoom(r.Id, r.Exits)
     };
 

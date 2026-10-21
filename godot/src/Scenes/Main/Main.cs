@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using DungeonDelver.Core.Combat;
 using DungeonDelver.Model.Creatures;
 using DungeonDelver.Scenes.Combat;
 using Godot;
@@ -16,12 +18,14 @@ public partial class Main : Node {
         AddChild(_dungeon);
     }
 
-    public void StartCombat(List<Creature> monsters) {
+    // onFinished tells the caller how the fight ended (the map uses it to clear the room on Victory)
+    public void StartCombat(List<Creature> monsters, Action<CombatState> onFinished) {
         var combat = GD.Load<PackedScene>("res://src/Scenes/Combat/combat_scene.tscn").Instantiate<CombatScene>();
         combat.Setup(Player, monsters);
-        combat.CombatFinished += _ => {   // later: mark room cleared, or game over on Defeat
+        combat.CombatFinished += state => {   // later: game over on Defeat
             combat.QueueFree();
             SetDungeonActive(true);
+            onFinished(state);
         };
         SetDungeonActive(false);
         AddChild(combat);

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DungeonDelver.Core.Dto.DungeonDto;
+using DungeonDelver.Core.Loading.Creatures;
 
 namespace DungeonDelver.Core.Loading.Dungeon;
 
@@ -9,6 +10,7 @@ internal static class DungeonValidator
 {
     internal const int CurrentVersion = 1;
     internal const int MaxExits = 3;    // max doors per room
+    internal const int MaxCreatures = 3;    // same limit CombatEncounter has
 
     /// returns every broken rule. empty list = map is fine
     internal static List<string> Validate(DungeonDto dto)
@@ -45,6 +47,20 @@ internal static class DungeonValidator
 
             if (!RoomFactory.IsKnownType(room.Type))
                 problems.Add($"Room {name} has unknown type '{room.Type}'. Allowed: {string.Join(", ", RoomFactory.KnownTypes)}.");
+
+            // creatures: combat rooms need 1-3, other rooms none. no list at all counts as 0
+            var creatureCount = room.Creatures?.Count ?? 0;
+            if (room.Type == "combat" && creatureCount is < 1 or > MaxCreatures)
+                problems.Add($"Combat room {name} has {creatureCount} creatures (needs 1 to {MaxCreatures}).");
+
+            if (room.Type != "combat" && creatureCount > 0)
+                problems.Add($"Room {name} is not a combat room, so it can't have creatures.");
+
+            // each creature has to follow the same rules as a creature loaded on its own
+            foreach (var creature in room.Creatures ?? new())
+                problems.AddRange(creature == null
+                    ? new[] { $"Room {name} has a null creature." }
+                    : CreatureValidator.Validate(creature));
 
             if (room.Exits == null)
             {

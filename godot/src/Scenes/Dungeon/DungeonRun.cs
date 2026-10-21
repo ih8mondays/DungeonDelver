@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DungeonDelver.Model.Creatures;
+using DungeonDelver.Core.Combat;
 using DungeonDelver.Model.Dungeon;
 using DungeonDelver.Core.Loading;
 using DungeonDelver.Core.Layout;
@@ -127,6 +127,24 @@ public partial class DungeonRun : Control {
         _visited.Add(room.Id);
         room.Enter();
         Refresh();
+
+        // walking into a room with monsters starts the fight.
+        // deferred = wait until the end of the frame: on the very first room we are still inside Main's _Ready,
+        // and Godot won't let Main add the combat scene while it is busy adding us
+        if (room is CombatRoom { IsCleared: false } combat)
+            Callable.From(() => StartFight(combat)).CallDeferred();
+    }
+
+    /// Opens the combat screen with this room's monsters. Winning clears the room, so you can leave.
+    private void StartFight(CombatRoom room) {
+        // monsters killed in an earlier attempt stay dead, and CombatEncounter refuses dead ones
+        var monsters = room.Creatures.Where(c => c.IsAlive).ToList();
+
+        (GetParent() as Main)?.StartCombat(monsters, state => {
+            if (state == CombatState.Victory)
+                room.Clear();
+            Refresh();   // redraw the hint and buttons: the room may be open now
+        });
     }
 
     /// Slides the token over, THEN enters the room. Input is locked while it slides.
@@ -178,12 +196,10 @@ public partial class DungeonRun : Control {
         _info.Text = $"{_map.Name}  -  tier {_layout.TierOf(_current)} of {_layout.TierCount - 1}\n"
                    + $"Room: {_current.Id} ({status})\n{hint}";
 
-        if (!_moving && _current is CombatRoom combat && !combat.IsCleared)
-            AddButton("Clear room", () => { combat.Clear(); Refresh(); });
-
-        if (!_moving)   // TODO: temporary demo, remove when CombatRoom holds creatures
-            AddButton("Fight (demo)", () =>
-                (GetParent() as Main)?.StartCombat([new Creature("Goblin 1", 30, 5), new Creature("Slime", 20, 3)]));
+        if (!_moving && _current is CombatRoom combat && !combat.IsCleared) {
+            AddButton("Fight", () => StartFight(combat));   // the fight starts by itself on entering, this is for trying again
+            AddButton("Clear room", () => { combat.Clear(); Refresh(); });   // debug shortcut
+        }
 
         if (!_moving && _current.IsEnd)
             AddButton("Restart", Load);
