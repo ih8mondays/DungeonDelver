@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DungeonDelver.Model.Creatures;
 using DungeonDelver.Model.Dungeon;
 using DungeonDelver.Core.Loading;
 using DungeonDelver.Core.Layout;
@@ -179,6 +180,10 @@ public partial class DungeonRun : Control {
 
         if (!_moving && _current is CombatRoom combat && !combat.IsCleared)
             AddButton("Clear room", () => { combat.Clear(); Refresh(); });
+
+        if (!_moving)   // TODO: temporary demo, remove when CombatRoom holds creatures
+            AddButton("Fight (demo)", () =>
+                (GetParent() as Main)?.StartCombat([new Creature("Goblin 1", 30, 5), new Creature("Slime", 20, 3)]));
 
         if (!_moving && _current.IsEnd)
             AddButton("Restart", Load);
