@@ -16,7 +16,7 @@ public class CombatEncounter {
     private readonly Player _player;
     private readonly List<Creature> _monsters;
     private readonly List<Creature> _combatants;
-    private int _cursor = 0;
+    private int _cursor = 0;    // effectively a current combatant "pointer"
     private readonly int _maxRounds;
     private int _round;
     private CombatState _state;
@@ -38,12 +38,11 @@ public class CombatEncounter {
                 throw new ArgumentException($"Monster '{creature.Name}' is already dead.", nameof(monsters));
         }
         
-        // shallow copy. don't touch or stuff breaks.
-        _combatants = [player, .. monsters];
+        _combatants = [player, .. monsters]; // must be a shallow copy
         _player = player;
         _monsters = [.. monsters];
         _maxRounds = maxRounds;
-        _round = 1;
+        _round = 0;
         _cursor = 0;
         _state = CombatState.InProgress;
     }
@@ -61,33 +60,37 @@ public class CombatEncounter {
         var targetDied = !target.IsAlive;
         
         EvaluateState();
-        MoveCursor();
+        if (!IsCombatFinished) // Avoids possible infinite loops
+            MoveCursor();
         
+        //TODO
+        // 1. The constructor still takes List<Creature> and doesn't reject duplicates.
+        // 2. StepResult identifies creatures by name.
         return new StepResult(actor.Name, target.Name, ability.Name, calculated, dealt, targetDied, _round, _state);
     }
 
     private Creature ChooseTarget(Creature actor) {
-        // player -> first living monster.
-        // monster -> player
-        return actor is Player 
+        // player attacks closest living monster.
+        // monster attacks player
+        return actor == _player
             ? _monsters.First(x => x.IsAlive)
             : _player;
     }
 
     private void EvaluateState() {
-        if (_round >= _maxRounds) {
-            _state = CombatState.Stalemate;
-        } else if (!_player.IsAlive) {
+         if (!_player.IsAlive) {
             _state = CombatState.Defeat;
-        } else if (!_monsters.Any(x => x.IsAlive)) {
+         } else if (!_monsters.Any(x => x.IsAlive)) {
             _state = CombatState.Victory;
-        }
+         } else if (_round > _maxRounds) {
+            _state = CombatState.Stalemate;
+         }
     }
     
     private void MoveCursor() {
         // skip dead monsters, advance _cursor
         do {
-            if (_cursor == _combatants.Count - 1) 
+            if (_cursor == 0)
                 _round++;
             _cursor = (_cursor + 1) % _combatants.Count;
         } while (!_combatants[_cursor].IsAlive);
