@@ -18,6 +18,10 @@ public class CombatEncounterTests {
         _monsters = [];
     }
 
+    // #############################################################################
+    // --------------------- Constructor Tests -------------------------------------
+    // #############################################################################
+    
     [Fact]
     public void Constructor_ThrowsOnNullPlayer() {
         // Arrange
@@ -51,5 +55,30 @@ public class CombatEncounterTests {
         _monsters = null;
         Assert.Throws<ArgumentNullException>(() => new CombatEncounter(_player, _monsters, 100));
     }
+    
+    [Fact]
+    public void Constructor_ThrowsOnDeadMonsters() {
+        //TODO
+    }
+    
+    // #############################################################################
+    // --------------------- Step() Tests ------------------------------------------
+    // #############################################################################
+
+    [Fact]
+    public void Step_ThrowsOnFinishedEncounter() {
+        _monsters.Add(_creature1);
+        
+        
+    }
+    
+    
+    [Fact]
+    public void Step_AdvancesRoundByOne() {
+        
+    }
+    
+    
+    
     
 }
