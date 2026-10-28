@@ -1,0 +1,43 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/Scenes/Combat/CombatScene.cs" id="1_combat"]
+
+[node name="CombatScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_combat")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.08, 0.07, 0.1, 1)
+
+[node name="TopBar" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 40.0
+grow_horizontal = 2
+
+[node name="RoundLabel" type="Label" parent="TopBar"]
+layout_mode = 2
+text = "Round 1"
+horizontal_alignment = 1
+
+[node name="PlayerSlot" type="Marker2D" parent="."]
+position = Vector2(250, 430)
+
+[node name="MonsterSlot0" type="Marker2D" parent="."]
+position = Vector2(650, 430)
+
+[node name="MonsterSlot1" type="Marker2D" parent="."]
+position = Vector2(780, 370)
+
+[node name="MonsterSlot2" type="Marker2D" parent="."]
+position = Vector2(910, 310)

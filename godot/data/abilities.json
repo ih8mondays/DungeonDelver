@@ -1,0 +1,5 @@
+[
+  // damage = baseDamage + attackPower * attackPowerScalingPercent / 100
+  { "id": "basic_attack", "name": "Basic Attack", "baseDamage": 0, "attackPowerScalingPercent": 100, "procChancePercent": 100,
+    "iconId": "basic_attack", "spriteId": "basic_attack" }
+]

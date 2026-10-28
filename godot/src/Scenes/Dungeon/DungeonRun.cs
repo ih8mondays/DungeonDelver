@@ -1,9 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DungeonDelver.Core.Combat;
+using DungeonDelver.Model.Creatures;
 using DungeonDelver.Model.Dungeon;
 using DungeonDelver.Core.Loading;
+using DungeonDelver.Core.Loading.Abilities;
 using DungeonDelver.Core.Layout;
+using DungeonDelver.Core.Loading.Dungeon;
 using Godot;
 using FileAccess = Godot.FileAccess;
 
@@ -22,6 +26,14 @@ public partial class DungeonRun : Control {
     [Export] public float Jitter { get; set; } = 0f;
     [Export] public int Seed { get; set; } = 0;
     [Export] public float RoomRadius { get; set; } = 26f;
+
+    /// Whoever shows the map listens here and opens the combat screen. The second argument is how the fight ended,
+    /// the map uses it to clear the room. Nobody listening (map run on its own) = the fight just doesn't start.
+    public event Action<List<Creature>, Action<CombatState>> FightRequested;
+
+    /// Where creatures' ability ids get looked up. Set it before the scene enters the tree: the map loads in _Ready.
+    /// Left null (map run on its own), creatures that list abilities fail to load.
+    public AbilityCatalog Abilities { get; set; }
 
     /// How long the token takes to slide from one room to the next, in seconds.
     [Export] public float MoveTime { get; set; } = 0.35f;
@@ -92,7 +104,7 @@ public partial class DungeonRun : Control {
             if (FileAccess.GetOpenError() != Error.Ok)
                 throw new InvalidDungeonException(MapPath, new[] { $"Could not open file: {FileAccess.GetOpenError()}" });
 
-            _map = DungeonLoader.FromJson(json, MapPath);
+            _map = DungeonLoader.FromJson(json, MapPath, Abilities);
             _layout = TieredLayout.Build(_map, new LayoutSettings {
                 TierSpacing = TierSpacing,
                 RoomSpacing = RoomSpacing,
@@ -125,6 +137,24 @@ public partial class DungeonRun : Control {
         _visited.Add(room.Id);
         room.Enter();
         Refresh();
+
+        // walking into a room with monsters starts the fight.
+        // deferred = wait until the end of the frame: on the very first room we are still inside Main's _Ready,
+        // and Godot won't let Main add the combat scene while it is busy adding us
+        if (room is CombatRoom { IsCleared: false } combat)
+            Callable.From(() => StartFight(combat)).CallDeferred();
+    }
+
+    /// Opens the combat screen with this room's monsters. Winning clears the room, so you can leave.
+    private void StartFight(CombatRoom room) {
+        // monsters killed in an earlier attempt stay dead, and CombatEncounter refuses dead ones
+        var monsters = room.Creatures.Where(c => c.IsAlive).ToList();
+
+        FightRequested?.Invoke(monsters, state => {
+            if (state == CombatState.Victory)
+                room.Clear();
+            Refresh();   // redraw the hint and buttons: the room may be open now
+        });
     }
 
     /// Slides the token over, THEN enters the room. Input is locked while it slides.
@@ -176,8 +206,10 @@ public partial class DungeonRun : Control {
         _info.Text = $"{_map.Name}  -  tier {_layout.TierOf(_current)} of {_layout.TierCount - 1}\n"
                    + $"Room: {_current.Id} ({status})\n{hint}";
 
-        if (!_moving && _current is CombatRoom combat && !combat.IsCleared)
-            AddButton("Clear room", () => { combat.Clear(); Refresh(); });
+        if (!_moving && _current is CombatRoom combat && !combat.IsCleared) {
+            AddButton("Fight", () => StartFight(combat));   // the fight starts by itself on entering, this is for trying again
+            AddButton("Clear room", () => { combat.Clear(); Refresh(); });   // debug shortcut
+        }
 
         if (!_moving && _current.IsEnd)
             AddButton("Restart", Load);

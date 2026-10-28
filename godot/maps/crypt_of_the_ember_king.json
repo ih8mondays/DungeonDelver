@@ -2,13 +2,37 @@
   "version": 1,
   "name": "Crypt of the Ember King",
   "rooms": [
-    { "id": "entrance",     "type": "combat", "exits": ["hall"] },
-    { "id": "hall",         "type": "combat", "exits": ["east_gallery", "west_stair"] },
-    { "id": "east_gallery", "type": "combat", "exits": ["armory", "cistern"] },
-    { "id": "west_stair",   "type": "combat", "exits": ["cistern"] },
-    { "id": "armory",       "type": "shop",   "exits": ["shrine"] },
-    { "id": "cistern",      "type": "combat", "exits": ["shrine"] },
-    { "id": "shrine",       "type": "shop",   "exits": ["throne"] },
-    { "id": "throne",       "type": "combat", "exits": [] }
+    { "id": "entrance", "type": "combat", "exits": ["hall"],
+      "creatures": [
+        { "name": "Slime", "maxHp": 15, "attackPower": 2, "abilities": ["basic_attack"] }
+      ] },
+    { "id": "hall", "type": "combat", "exits": ["east_gallery", "west_stair"],
+      "creatures": [
+        { "name": "Goblin", "maxHp": 25, "attackPower": 4, "abilities": ["basic_attack"] },
+        { "name": "Slime", "maxHp": 15, "attackPower": 2, "abilities": ["basic_attack"] }
+      ] },
+    { "id": "east_gallery", "type": "combat", "exits": ["armory", "cistern"],
+      "creatures": [
+        { "name": "Goblin 1", "maxHp": 25, "attackPower": 4, "abilities": ["basic_attack"] },
+        { "name": "Goblin 2", "maxHp": 25, "attackPower": 4, "abilities": ["basic_attack"] }
+      ] },
+    { "id": "west_stair", "type": "combat", "exits": ["cistern"],
+      "creatures": [
+        { "name": "Goblin", "maxHp": 30, "attackPower": 5, "abilities": ["basic_attack"] },
+        { "name": "Slime", "maxHp": 20, "attackPower": 3, "abilities": ["basic_attack"] }
+      ] },
+    { "id": "armory", "type": "shop", "exits": ["shrine"] },
+    { "id": "cistern", "type": "combat", "exits": ["shrine"],
+      "creatures": [
+        { "name": "Slime 1", "maxHp": 20, "attackPower": 3, "abilities": ["basic_attack"] },
+        { "name": "Slime 2", "maxHp": 20, "attackPower": 3, "abilities": ["basic_attack"] },
+        { "name": "Slime 3", "maxHp": 20, "attackPower": 3, "abilities": ["basic_attack"] }
+      ] },
+    { "id": "shrine", "type": "shop", "exits": ["throne"] },
+    { "id": "throne", "type": "combat", "exits": [],
+      "creatures": [
+        { "name": "Ember King", "maxHp": 80, "attackPower": 9, "abilities": ["basic_attack"] },
+        { "name": "Goblin Guard", "maxHp": 30, "attackPower": 5, "abilities": ["basic_attack"] }
+      ] }
   ]
 }
