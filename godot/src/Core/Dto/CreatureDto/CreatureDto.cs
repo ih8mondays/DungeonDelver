@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace DungeonDelver.Core.Dto.CreatureDto;
@@ -8,4 +9,5 @@ namespace DungeonDelver.Core.Dto.CreatureDto;
 public record CreatureDto(
     [property: JsonRequired] string Name,
     [property: JsonRequired] int MaxHp,
-    [property: JsonRequired] int AttackPower);
+    [property: JsonRequired] int AttackPower,
+    List<string> Abilities = null); // Ids from data/abilities.json, e.g. ["basic_attack"]. Needs an AbilityCatalog to load.

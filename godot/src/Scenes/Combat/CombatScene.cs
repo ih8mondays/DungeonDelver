@@ -1,19 +1,23 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using DungeonDelver.Core.Combat;
 using DungeonDelver.Model.Creatures;
 using Godot;
 
 namespace DungeonDelver.Scenes.Combat;
 
-// The combat screen: puts a view on each slot and owns the subscriptions for the length of the fight.
+// The combat screen: puts a view on each slot, then plays the fight one StepResult at a time.
+// CombatEncounter does the whole step instantly, so the screen is never ahead of the numbers; it just replays them.
 public partial class CombatScene : Control {
     public event Action<CombatState> CombatFinished;
 
-    private readonly AnimationQueue _queue = new();   // one queue for every view, so animations stay in order
-    private readonly List<CombatantView> _views = [];
+    // StepResult names its creatures, so this is how a name finds its view.
+    // Names are unique inside a room (the map numbers them), Add throws if they ever aren't.
+    private readonly Dictionary<string, CombatantView> _views = [];
     private Player _player;
     private List<Creature> _monsters;
+    private Label _roundLabel;
 
     public void Setup(Player player, List<Creature> monsters) {
         _player = player;
@@ -21,47 +25,72 @@ public partial class CombatScene : Control {
     }
 
     public override void _Ready() {
-        // Back to front, so monster 0 (in front) is drawn on top.
+        _roundLabel = GetNode<Label>("TopBar/RoundLabel");
+        _ = Run();   // fire and forget: Run reports its own errors, and ends by raising CombatFinished
+    }
+
+    private async Task Run() {
+        CombatState state;
+        try {
+            AddViews();
+            state = await PlayEncounter(new CombatEncounter(_player, _monsters));
+            await ShowResult(state);
+        }
+        catch (Exception e) {
+            // Without this the player would be stuck on a dead screen. Stalemate leaves the room uncleared.
+            GD.PushError(e.ToString());
+            state = CombatState.Stalemate;
+        }
+
+        if (IsInstanceValid(this))   // the scene may have been removed while we were waiting
+            CombatFinished?.Invoke(state);
+    }
+
+    // Back to front, so monster 0 (in front) is drawn on top.
+    private void AddViews() {
         for (var i = _monsters.Count - 1; i >= 0; i--)
             AddView(_monsters[i], $"MonsterSlot{i}");
         AddView(_player, "PlayerSlot");
-
-        // TODO: step loop. While not finished: encounter.Step(); await _queue.Drain();
-        // TODO: RoundLabel updates on the encounter's RoundStarted event.
     }
 
-    // The step loop will call this when the encounter's Finished event arrives.
-    public void Finish(CombatState state) {
-        UnbindAll();
-        CombatFinished?.Invoke(state);
+    // Step, play it, repeat. Returns how the fight ended.
+    private async Task<CombatState> PlayEncounter(CombatEncounter encounter) {
+        CombatState state;
+        do {
+            var step = encounter.Step();
+            await PlayStep(step);
+            state = step.StateAfter;
+        } while (state == CombatState.InProgress);
+        return state;
     }
 
-    // TODO: temporary debug keys, remove when the real step loop exists.
-    // 1/2/3 hit that monster for 10, P hits the player for 10, Enter ends the fight.
-    public override void _UnhandledKeyInput(InputEvent @event) {
-        if (@event is not InputEventKey { Pressed: true, Echo: false } key) return;
-
-        var index = (int)(key.Keycode - Key.Key1);
-        if (index is >= 0 and <= 2 && index < _monsters.Count) _monsters[index].Damage(10);
-        else if (key.Keycode == Key.P) _player.Damage(10);
-        else if (key.Keycode == Key.Enter) Finish(CombatState.Victory);
-
-        _ = _queue.Drain();   // debug only: the real loop awaits this between steps
+    private async Task ShowResult(CombatState state) {
+        _roundLabel.Text = state switch {
+            CombatState.Victory => "Victory!",
+            CombatState.Defeat => "Defeat...",
+            _ => "Stalemate",
+        };
+        await ToSignal(GetTree().CreateTimer(1.2), SceneTreeTimer.SignalName.Timeout);   // let the result sink in
     }
 
-    // Safety net: if the scene is removed early, views must still stop listening.
-    public override void _ExitTree() => UnbindAll();
+    // One attack, as a story: attacker steps in, target takes the hit, and maybe falls over.
+    private async Task PlayStep(StepResult step) {
+        var attacker = _views[step.Actor];
+        var target = _views[step.Target];
+
+        _roundLabel.Text = $"Round {step.Round}";
+        await attacker.Lunge(target.Position);
+        await target.Hit(step.TargetHp, step.Dealt);
+        if (step.TargetDied)
+            await target.Die();
+    }
 
     private void AddView(Creature creature, string slotName) {
         var view = GD.Load<PackedScene>("res://src/Scenes/Combat/combatant_view.tscn").Instantiate<CombatantView>();
         view.Position = GetNode<Marker2D>(slotName).Position;
         AddChild(view);                                      // in the tree first, so its _Ready has run
-        view.Bind(creature, TextureFor(creature), _queue);
-        _views.Add(view);
-    }
-
-    private void UnbindAll() {
-        foreach (var view in _views) view.Unbind();
+        view.Setup(creature, TextureFor(creature));
+        _views.Add(creature.Name, view);
     }
 
     // TODO: temporary. Creatures have no sprite id yet; ask the teammate for one.

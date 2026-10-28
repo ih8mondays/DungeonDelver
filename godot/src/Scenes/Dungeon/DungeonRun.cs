@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DungeonDelver.Core.Combat;
+using DungeonDelver.Model.Creatures;
 using DungeonDelver.Model.Dungeon;
 using DungeonDelver.Core.Loading;
+using DungeonDelver.Core.Loading.Abilities;
 using DungeonDelver.Core.Layout;
 using DungeonDelver.Core.Loading.Dungeon;
 using Godot;
@@ -24,6 +26,14 @@ public partial class DungeonRun : Control {
     [Export] public float Jitter { get; set; } = 0f;
     [Export] public int Seed { get; set; } = 0;
     [Export] public float RoomRadius { get; set; } = 26f;
+
+    /// Whoever shows the map listens here and opens the combat screen. The second argument is how the fight ended,
+    /// the map uses it to clear the room. Nobody listening (map run on its own) = the fight just doesn't start.
+    public event Action<List<Creature>, Action<CombatState>> FightRequested;
+
+    /// Where creatures' ability ids get looked up. Set it before the scene enters the tree: the map loads in _Ready.
+    /// Left null (map run on its own), creatures that list abilities fail to load.
+    public AbilityCatalog Abilities { get; set; }
 
     /// How long the token takes to slide from one room to the next, in seconds.
     [Export] public float MoveTime { get; set; } = 0.35f;
@@ -94,7 +104,7 @@ public partial class DungeonRun : Control {
             if (FileAccess.GetOpenError() != Error.Ok)
                 throw new InvalidDungeonException(MapPath, new[] { $"Could not open file: {FileAccess.GetOpenError()}" });
 
-            _map = DungeonLoader.FromJson(json, MapPath);
+            _map = DungeonLoader.FromJson(json, MapPath, Abilities);
             _layout = TieredLayout.Build(_map, new LayoutSettings {
                 TierSpacing = TierSpacing,
                 RoomSpacing = RoomSpacing,
@@ -140,7 +150,7 @@ public partial class DungeonRun : Control {
         // monsters killed in an earlier attempt stay dead, and CombatEncounter refuses dead ones
         var monsters = room.Creatures.Where(c => c.IsAlive).ToList();
 
-        (GetParent() as Main)?.StartCombat(monsters, state => {
+        FightRequested?.Invoke(monsters, state => {
             if (state == CombatState.Victory)
                 room.Clear();
             Refresh();   // redraw the hint and buttons: the room may be open now

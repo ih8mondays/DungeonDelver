@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DungeonDelver.Core.Dto.DungeonDto;
+using DungeonDelver.Core.Loading.Abilities;
 using DungeonDelver.Core.Loading.Creatures;
 
 namespace DungeonDelver.Core.Loading.Dungeon;
@@ -13,7 +14,7 @@ internal static class DungeonValidator
     internal const int MaxCreatures = 3;    // same limit CombatEncounter has
 
     /// returns every broken rule. empty list = map is fine
-    internal static List<string> Validate(DungeonDto dto)
+    internal static List<string> Validate(DungeonDto dto, AbilityCatalog abilities = null)
     {
         var problems = new List<string>();
 
@@ -60,7 +61,7 @@ internal static class DungeonValidator
             foreach (var creature in room.Creatures ?? new())
                 problems.AddRange(creature == null
                     ? new[] { $"Room {name} has a null creature." }
-                    : CreatureValidator.Validate(creature));
+                    : CreatureValidator.Validate(creature, abilities));
 
             if (room.Exits == null)
             {
